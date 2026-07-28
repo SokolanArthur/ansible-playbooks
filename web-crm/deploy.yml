@@ -1,0 +1,26 @@
+---
+- hosts: crm-prod
+  become: true
+
+  tasks:
+    - name: Update the package cache and install Git.
+      ansible.builtin.apt:
+        name: git
+        state: present
+        update_cache: yes
+
+    - name: Download Docker
+      ansible.builtin.apt:
+        name: 
+          - docker.io
+          - docker-compose-v2
+        state: present
+        
+    - name: Download template web-crm-deploy-stack from github.com
+      ansible.builtin.git:
+        repo: 'https://github.com/SokolanArthur/web-crm-deploy-stack'
+        dest: '/opt/web-crm'
+
+    - name: Start containers
+      ansible.community.docker.docker_compose_v2:
+        project_src: '/opt/web-crm'
