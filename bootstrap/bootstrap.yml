@@ -3,10 +3,8 @@
   hosts: crm_prod
   become: yes
 
-  vars:
-    admin_user: "john_joperge" # Place your username here
-    admin_password: "my_super_password123" # Place your secret password here
-    admin_ssh_key: "ssh-rsa AAAA..." # Place your public ssh key here
+  vars_files:
+    - ../secrets.yml
 
   tasks:
     - name: Add the user {{ admin_user }} with hashed password
