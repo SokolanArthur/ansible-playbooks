@@ -1,10 +1,9 @@
 ---
 - hosts: crm_prod
   become: true
-  vars:
-      postgres_db: "banana" # Place your database here
-      postgres_user: "gru" # Place your user here
-      postgres_password: "StealTheMoon" # Place your password here
+
+  vars_files:
+    - ../secrets.yml
       
   tasks:
     - name: Update the package cache and install Git.
