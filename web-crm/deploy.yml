@@ -1,5 +1,5 @@
 ---
-- hosts: crm-prod
+- hosts: crm_prod
   become: true
 
   tasks:
