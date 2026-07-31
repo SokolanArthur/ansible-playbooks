@@ -1,7 +1,11 @@
 ---
 - hosts: crm_prod
   become: true
-
+  vars:
+      postgres_db: "banana" # Place your database here
+      postgres_user: "gru" # Place your user here
+      postgres_password: "StealTheMoon" # Place your password here
+      
   tasks:
     - name: Update the package cache and install Git.
       ansible.builtin.apt:
@@ -11,16 +15,24 @@
 
     - name: Download Docker
       ansible.builtin.apt:
-        name: 
+        name:
           - docker.io
           - docker-compose-v2
         state: present
-        
+
     - name: Download template web-crm-deploy-stack from github.com
       ansible.builtin.git:
         repo: 'https://github.com/SokolanArthur/web-crm-deploy-stack'
         dest: '/opt/web-crm'
 
+    - name: Create .env file for database and application
+      ansible.builtin.copy:
+        dest: /opt/web-crm/.env
+        content: |
+          POSTGRES_DB={{ postgres_db }}
+          POSTGRES_USER={{ postgres_user }}
+          POSTGRES_PASSWORD={{ postgres_password }}
+
     - name: Start containers
-      ansible.community.docker.docker_compose_v2:
+      community.docker.docker_compose_v2:
         project_src: '/opt/web-crm'
