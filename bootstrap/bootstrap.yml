@@ -1,0 +1,40 @@
+---
+- name: Bootstrap fresh Selectel server
+  hosts: crm_prod
+  become: yes
+
+  vars:
+    admin_user: "john_joperge" # Place your username here
+    admin_password: "my_super_password123" # Place your secret password here
+    admin_ssh_key: "ssh-rsa AAAA..." # Place your public ssh key here
+
+  tasks:
+    - name: Add the user {{ admin_user }} with hashed password
+      ansible.builtin.user:
+        name: "{{ admin_user }}"
+        password: "{{ admin_password | password_hash('sha512') }}"
+        comment: 'System Administrator'
+        create_home: yes
+        append: yes
+        groups: sudo
+        shell: /bin/bash
+
+    - name: Add SSH public key for {{ admin_user }}
+      ansible.posix.authorized_key:
+        user: "{{ admin_user }}"
+        state: present
+        key: "{{ admin_ssh_key }}"
+
+    - name: Disable root SSH login
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin no'
+        state: present
+      notify: Restart sshd
+
+  handlers:
+    - name: Restart sshd
+      ansible.builtin.service:
+        name: ssh
+        state: restarted
