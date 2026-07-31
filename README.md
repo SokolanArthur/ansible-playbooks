@@ -11,7 +11,7 @@ This repository contains Ansible playbooks for automated infrastructure configur
 ## Quick Start
 
 **1. Configure the inventory** 
-Edit the `inventory` file, specifying your server's actual IP address and connection user.
+Edit the `inventory.ini`, `bootstrap.yml`, and `deploy.yml` files, specifying the current details for your server and users.
 
 **2. Run the initial setup (Bootstrap)**
 This is executed once on a new server to prepare the environment:
