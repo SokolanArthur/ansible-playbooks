@@ -1,49 +1,65 @@
-# Infrastructure as Code: Server Provisioning
+# Infrastructure as Code: Server Provisioning & Deployment
 
-This repository contains Ansible playbooks for automated infrastructure configuration and project deployment.
+This repository contains Ansible playbooks for automated infrastructure provisioning (VDS/VPS) and project deployment using Docker Compose. 
 
-## Repository Structure
+The repository is designed with a security-first approach: real credentials and IP addresses are decoupled from the code and are not stored publicly.
 
-- `inventory.ini` — Configuration file containing target server IP addresses and connection parameters.
-- `bootstrap.yml` — Primary server initialization playbook. Transforms a bare VDS into a secure, ready-to-use machine (SSH configuration, user creation, installation of basic utilities).
-- `deploy.yml` — Project deployment playbook. Handles dependency installation (e.g., Docker) and container/application startup.
+## 📁 Repository Structure
 
-## Quick Start
+* `inventory.example.ini` — Inventory file template. Contains server groups and connection parameters.
+* `secrets.example.yml` — Secret variables template (passwords, usernames, SSH keys).
+* `bootstrap/bootstrap.yml` — Playbook for initial fresh server provisioning (user creation, SSH hardening, basic dependencies installation).
+* `web-crm/deploy.yml` — Project deployment playbook (installs Git, Docker, pulls the repository, and starts containers).
 
-**1. Configure the inventory** 
-Edit the `inventory.ini`, `bootstrap.yml`, and `deploy.yml` files, specifying the current details for your server and users.
+## 🚀 Quick Start
 
-**2. Run the initial setup (Bootstrap)**
-This is executed once on a new server to prepare the environment:
+### Step 1. Configuration Setup (Security)
+Before running the playbooks, you need to create local files with your actual data based on the provided templates.
 
-`ansible-playbook -i inventory bootstrap.yml`
+1. Create a copy of `inventory.example.ini`, rename it to **`inventory.ini`**, and fill in your server's actual IP address.
+2. Create a copy of `secrets.example.yml`, rename it to **`secrets.yml`**, and fill in your real passwords (do not change the variable keys).
 
-**3. Deploy the project**
-Run this to roll out the infrastructure or apply new changes:
+*(Note: `inventory.ini` and `secrets.yml` should already be included in your `.gitignore` to prevent accidental data leaks during commits).*
 
-`ansible-playbook -i inventory deploy.yml`
+### Step 2. Server Bootstrapping
+This step is executed once on a fresh server to prepare a secure environment:
+
+`ansible-playbook -i inventory.ini bootstrap/bootstrap.yml`
+
+### Step 3. Project Deployment
+Command to set up the Docker environment and spin up containers (can be run multiple times to apply configuration updates):
+
+`ansible-playbook -i inventory.ini web-crm/deploy.yml`
 
 ---
 
-Этот репозиторий содержит Ansible-плейбуки для автоматизированной настройки инфраструктуры и деплоя проектов.
+Этот репозиторий содержит Ansible-плейбуки для автоматизированной настройки инфраструктуры (VDS/VPS) и деплоя проектов с использованием Docker Compose. 
 
-##  Структура репозитория
+Архитектура репозитория построена с упором на безопасность: реальные пароли и IP-адреса вынесены за пределы кода и не хранятся в публичном доступе.
 
-- `inventory.ini` — конфигурационный файл, содержащий IP-адреса целевых серверов и параметры подключения.
-- `bootstrap.yml` — плейбук первичной инициализации сервера. Превращает «голую» VDS в безопасную и готовую к работе машину (настройка SSH, создание пользователей, установка базовых утилит).
-- `deploy.yml` — плейбук развертывания проекта. Отвечает за установку зависимостей (например, Docker) и запуск контейнеров/приложений.
+## 📁 Структура репозитория
 
-##  Быстрый старт
+* `inventory.example.ini` — шаблон файла инвентаризации. Содержит группы серверов и параметры подключения.
+* `secrets.example.yml` — шаблон файла с секретными переменными (пароли, имена пользователей, SSH-ключи).
+* `bootstrap/bootstrap.yml` — плейбук для первичной настройки «голого» сервера (создание пользователя, настройка SSH, установка базовых зависимостей).
+* `web-crm/deploy.yml` — плейбук для развертывания проекта (установка Git, Docker, загрузка кода и запуск контейнеров).
 
-**1. Настройка инвентаря**
-Отредактируйте файлы `inventory.ini`, `bootstrap.yml`, `deploy.yml` указав актуальные данные вашего сервера и пользователей.
+## 🚀 Быстрый старт (Quick Start)
 
-**2. Первичная настройка (Bootstrap)**
-Выполняется один раз на новом сервере для подготовки окружения:
+### Шаг 1. Подготовка конфигурации (Безопасность)
+Перед запуском скриптов вам необходимо создать локальные файлы с вашими реальными данными на основе предоставленных шаблонов. 
 
-`ansible-playbook -i inventory bootstrap.yml`
+1. Создайте копию файла `inventory.example.ini`, назовите её **`inventory.ini`**, впишите туда IP-адрес вашего сервера и имя пользователя.
+2. Создайте копию файла `secrets.example.yml`, назовите её **`secrets.yml`** и заполните её своими реальными паролями (названия переменных менять нельзя).
 
-**3. Деплой проекта (Deploy)**
-Запускается для раскатки инфраструктуры или выкатки новых изменений:
+*(Примечание: файлы `inventory.ini` и `secrets.yml` уже должны быть добавлены в ваш `.gitignore`, чтобы предотвратить случайную утечку данных при коммите).*
 
-`ansible-playbook -i inventory deploy.yml`
+### Шаг 2. Базовая настройка сервера (Bootstrap)
+Этот шаг выполняется один раз на новом сервере, чтобы подготовить безопасное окружение:
+
+`ansible-playbook -i inventory.ini bootstrap/bootstrap.yml`
+
+### Шаг 3. Деплой проекта (Deploy)
+Команда для установки Docker-окружения и запуска контейнеров (можно запускать повторно для обновления конфигурации):
+
+`ansible-playbook -i inventory.ini web-crm/deploy.yml`
